@@ -1,0 +1,67 @@
+#! /bin/bash
+#
+# simple init script for gitlab-webhook-receiver
+#
+#
+# chkconfig: 345 99 01
+# description: gitlab webhook receiver
+#
+# File : gitlab-webhook-receiver
+
+# Source function library.
+. /etc/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+prog="/var/lib/puppet/gitlab-webhook-receiver/gitlab-webhook-receiver.py"
+PROG_USER="puppet"
+RETVAL=0
+
+start () {
+        echo -n "Starting $prog"
+        /usr/bin/sudo -u $PROG_USER  "$prog" &
+        RETVAL=$?
+        [ $RETVAL -eq 0 ] && success || failure
+        echo
+}
+
+stop () {
+        echo -n "Stopping $prog"
+        killproc gitlab-webhook-receiver.py
+        RETVAL=$?
+        [ $RETVAL -eq 0 ] && success || failure
+        echo
+}
+
+restart () {
+        stop
+        start
+}
+
+
+# See how we are called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        restart
+        ;;
+  status)
+        status $prog
+        RETVAL=$?
+        ;;
+  *)
+        echo "Usage: service gitlab-webhook-receiver {start|stop|restart|reload}"
+        RETVAL=2
+        ;;
+esac
+
+exit $RETVAL
