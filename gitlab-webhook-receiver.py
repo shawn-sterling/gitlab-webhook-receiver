@@ -47,6 +47,9 @@ git_master_dir = "/etc/puppet/environments/master"
 # this is the name of the gitlab project name
 git_project = "newpuppet"
 
+# this is the git ssh
+git_ssh = "git@github.com"
+
 log_max_size = 25165824         # 24 MB
 log_level = logging.INFO
 #log_level = logging.DEBUG      # DEBUG is quite verbose
@@ -121,8 +124,8 @@ class webhookReceiver(BaseHTTPRequestHandler):
                             output = self.run_it(cmd)
                         else:
                             os.chdir(git_dir)
-                            cmd = "git clone -b %s gitolite@git:%s %s" % (
-                                short_name, git_project, short_name)
+                            cmd = "git clone -b %s %s:%s %s" % (
+                                short_name, git_ssh, git_project, short_name)
                             output = self.run_it(cmd)
         log.debug('git_handle_branches ends')
         return current_branches
@@ -139,7 +142,8 @@ class webhookReceiver(BaseHTTPRequestHandler):
             for branch in current_branches:
                 current_directories.remove(branch)
             # a production symlink must exist for puppet, ignore this dir
-            current_directories.remove("production")
+            if "production" in current_directories: 
+                current_directories.remove("production")
             if len(current_directories) > 0:
                 for branch in current_directories:
                     fwd = os.path.join(git_dir, branch)
