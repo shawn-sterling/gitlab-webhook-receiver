@@ -57,7 +57,14 @@ or change the port on line 175 of the script.
 (3) Optional init script
 ------------------------
 
-remember to edit the script if any of your directories were changed.
+Remember to edit the script if any of your directories were changed.
+
+
+(4) Do initial checkout manually
+--------------------------------
+Whatever your git_dir is, do the first checkout manually. The script is made
+to work with a pre-existing setup; and this gives you a chance to make sure
+your permissions/ssh keys are all setup properly. 
 
 
 # Trouble getting it working?
