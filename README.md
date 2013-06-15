@@ -31,6 +31,9 @@ git_master_dir = "/etc/puppet/environments/master"
 # this is the name of the gitlab project name
 git_project = "newpuppet"
 
+# this is the git ssh account
+git_ssh = "git@github.com"
+
 log_max_size = 25165824         # 24 MB
 log_level = logging.INFO
 #log_level = logging.DEBUG      # DEBUG is quite verbose
