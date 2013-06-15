@@ -47,7 +47,7 @@ git_master_dir = "/etc/puppet/environments/master"
 # this is the name of the gitlab project name
 git_project = "newpuppet"
 
-# this is the git ssh
+# this is the git ssh account
 git_ssh = "git@github.com"
 
 log_max_size = 25165824         # 24 MB
@@ -142,7 +142,7 @@ class webhookReceiver(BaseHTTPRequestHandler):
             for branch in current_branches:
                 current_directories.remove(branch)
             # a production symlink must exist for puppet, ignore this dir
-            if "production" in current_directories: 
+            if "production" in current_directories:
                 current_directories.remove("production")
             if len(current_directories) > 0:
                 for branch in current_directories:
@@ -159,7 +159,17 @@ class webhookReceiver(BaseHTTPRequestHandler):
             receives post, handles it
         """
         log.debug('got post')
-        text = json.load(self.rfile)
+        message = 'OK'
+        self.rfile._sock.settimeout(5)
+        data_string = self.rfile.read(int(self.headers['Content-Length']))
+        self.send_response(200)
+        self.send_header("Content-type", "text")
+        self.send_header("Content-length", str(len(message)))
+        self.end_headers()
+        self.wfile.write(message)
+        log.debug('gitlab connection should be closed now.')
+        # parse data
+        text = json.loads(data_string)
         text = json.dumps(text, indent=2)
         if git_project in text:
             log.debug('project is in text')
@@ -169,6 +179,12 @@ class webhookReceiver(BaseHTTPRequestHandler):
             log.debug('post complete')
         else:
             log.debug('project name not in text, ignoring post')
+
+    def log_message(self, formate, *args):
+        """
+            disable printing to stdout/stderr for every post
+        """
+        return
 
 
 def main():
