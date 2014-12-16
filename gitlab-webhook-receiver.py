@@ -103,16 +103,16 @@ class webhookReceiver(BaseHTTPRequestHandler):
             clones any non existing branches.
         """
         log.debug('git_handle_branches begins')
-        current_branches = ["master"]
+        current_branches = []
         cmd = "git branch -a"
         output = self.run_it(cmd)
         for branch in output:
             branch = re.sub("\*", "", branch)
             branch = re.sub("\s+", "", branch)
             if not re.search("HEAD", branch):
-                if not re.search("master", branch):
-                    if re.search("/", branch):
-                        short_name = branch.split('/')[2]
+                if re.search("/", branch):
+                    short_name = branch.split('/')[2]
+                    if not short_name == "master":
                         current_branches.append(short_name)
                         fwd = os.path.join(git_dir, short_name)
                         if os.path.isdir(fwd):
