@@ -54,6 +54,8 @@ log_max_size = 25165824         # 24 MB
 log_level = logging.INFO
 #log_level = logging.DEBUG      # DEBUG is quite verbose
 
+listen_port = 8000
+
 ##### You should stop changing things unless you know what you are doing #####
 ##############################################################################
 
@@ -192,7 +194,7 @@ def main():
         the main event.
     """
     try:
-        server = HTTPServer(('', 8000), webhookReceiver)
+        server = HTTPServer(('', listen_port), webhookReceiver)
         log.info('started web server...')
         server.serve_forever()
     except KeyboardInterrupt:
